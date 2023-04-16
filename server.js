@@ -1,8 +1,8 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const DbConnect = require("./config/DbConnect");
+const errorMiddleware = require("./middleware/error");
 require("dotenv").config();
 
 const PORT = 5000;
@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-app.get("/", (req, res, next) => {
-  return res.json({ msg: "Hello" });
-});
+app.use("/api/auth", require("./router/authRouter"))
+
+app.use(errorMiddleware)
 
 DbConnect()
   .then(({ connection }) => {
