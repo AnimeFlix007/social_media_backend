@@ -9,12 +9,18 @@ const PORT = 5000;
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://192.168.0.104:5173"],
+    methods: ["GET", "PUT", "POST", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
-app.use("/api/auth", require("./router/authRouter"))
+app.use("/api/auth", require("./router/authRouter"));
 
-app.use(errorMiddleware)
+app.use(errorMiddleware);
 
 DbConnect()
   .then(({ connection }) => {

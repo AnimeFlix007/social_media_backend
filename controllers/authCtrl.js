@@ -9,7 +9,7 @@ const {
 
 const register = async (req, res, next) => {
   try {
-    const { fullname, username, email, password, gender } = req.body;
+    const { fullname, username, email, password } = req.body;
     const isUsernameExists = await User.findOne({ username });
     if (isUsernameExists)
       return next(new ErrorHandler("Username Already Exists", 409));
@@ -29,7 +29,6 @@ const register = async (req, res, next) => {
       username,
       email,
       password: hashedPassword,
-      gender,
     });
 
     const access_token = createAccessToken({ id: newUser._id });
@@ -37,7 +36,7 @@ const register = async (req, res, next) => {
 
     res.cookie("refreshtoken", refresh_token, {
       httpOnly: true,
-      path: "/api/auth/refresh_token",
+      secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
     });
 
@@ -50,6 +49,7 @@ const register = async (req, res, next) => {
       },
     });
   } catch (error) {
+    console.log(error.message);
     return next(new ErrorHandler());
   }
 };
@@ -68,7 +68,7 @@ const login = async (req, res, next) => {
 
     res.cookie("refreshtoken", refresh_token, {
       httpOnly: true,
-      path: "/api/auth/refresh_token",
+      secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
     });
 
@@ -97,13 +97,13 @@ const logout = async (req, res, next) => {
 const generateAccessToken = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refreshtoken;
+    console.log(req.cookies);
     if (!refresh_token) return next(new ErrorHandler("Unauthorized", 401));
     jwt.verify(
       refresh_token,
       process.env.REFRESH_TOKEN_KEY,
       async (err, result) => {
         if (err) return next(new ErrorHandler("Please Login", 500));
-        console.log(result);
         const user = await User.findById(result.id)
           .select("-password")
           .populate("followers following", "-password");

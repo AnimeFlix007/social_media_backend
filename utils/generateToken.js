@@ -5,7 +5,6 @@ const createAccessToken = (payload) => {
 };
 
 const createRefreshToken = (payload) => {
-  console.log(payload);
   return jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, { expiresIn: "30d" });
 };
 
