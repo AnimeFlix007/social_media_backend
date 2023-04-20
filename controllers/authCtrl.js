@@ -124,5 +124,5 @@ module.exports = {
   register,
   login,
   generateAccessToken,
-  logout,
+  logout
 };
