@@ -26,8 +26,12 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
+      default: "https://pbs.twimg.com/media/FfZGtJpXoAEycGL.jpg",
+    },
+    bg_image: {
+      type: String,
       default:
-        "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png",
+        "https://fictionhorizon.com/wp-content/uploads/2023/03/FairyTail.jpg",
     },
     role: { type: String, default: "user" },
     gender: { type: String, default: "male" },
@@ -39,6 +43,10 @@ const userSchema = new mongoose.Schema(
       maxlength: 200,
     },
     website: { type: String, default: "" },
+    instagram: { type: String, default: "" },
+    youtube: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
+    twitter: { type: String, default: "" },
     followers: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     following: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     saved: [{ type: mongoose.Types.ObjectId, ref: "user" }],

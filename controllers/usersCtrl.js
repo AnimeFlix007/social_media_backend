@@ -14,4 +14,29 @@ const searchUser = async (req, res, next) => {
   }
 };
 
-module.exports = { searchUser };
+const userDetail = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) return next(new ErrorHandler("User does not exists", 404));
+    return res.status(200).json({ user });
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const payload = req.body;
+    const user = await User.findByIdAndUpdate(id, payload, {
+      new: true,
+    });
+    if (!user) return next(new ErrorHandler("User does not exists", 404));
+    return res.status(200).json({ user });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
+
+module.exports = { searchUser, userDetail, updateUser };
