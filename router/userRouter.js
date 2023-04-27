@@ -4,6 +4,6 @@ const router = require("express").Router()
 
 router.get("/search", auth, usersCtrl.searchUser)
 router.get("/:id", auth, usersCtrl.userDetail)
-router.put("/:id", auth, usersCtrl.updateUser)
+router.patch("/:id", auth, usersCtrl.updateUser)
 
 module.exports = router

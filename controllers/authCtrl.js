@@ -97,7 +97,6 @@ const logout = async (req, res, next) => {
 const generateAccessToken = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refreshtoken;
-    console.log(req.cookies);
     if (!refresh_token) return next(new ErrorHandler("Unauthorized", 401));
     jwt.verify(
       refresh_token,

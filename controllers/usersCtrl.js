@@ -33,7 +33,9 @@ const updateUser = async (req, res, next) => {
       new: true,
     });
     if (!user) return next(new ErrorHandler("User does not exists", 404));
-    return res.status(200).json({ user });
+    return res
+      .status(200)
+      .json({ user, message: "Profile Updated Sucsessfully" });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
