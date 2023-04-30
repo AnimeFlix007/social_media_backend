@@ -5,14 +5,14 @@ const DbConnect = require("./config/DbConnect");
 const errorMiddleware = require("./middleware/error");
 const authRouter = require("./router/authRouter");
 const userRouter = require("./router/userRouter");
+const postRouter = require("./router/postRouter");
 require("dotenv").config();
 
 const PORT = 5000;
 
 const app = express();
 app.use(cookieParser());
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({limit: '50mb'}));
+app.use(express.json({ limit: "1mb" }));
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://192.168.0.104:5173"],
@@ -23,6 +23,7 @@ app.use(
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/posts", postRouter);
 
 app.use(errorMiddleware);
 
