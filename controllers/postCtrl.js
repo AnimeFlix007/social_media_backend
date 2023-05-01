@@ -1,21 +1,33 @@
 const Post = require("../model/Post");
+const uploadCloudinary = require("../utils/cloudinary");
 const ErrorHandler = require("../utils/errorHandler");
+const fs = require("fs");
 
 const createPost = async (req, res, next) => {
+  const uploader = async (path) => await uploadCloudinary(path, "images");
+  const files = req.files;
   try {
-    const { content, images } = req.body;
+    const urls = [];
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+      fs.unlinkSync(path);
+    }
 
-    if (images.length === 0)
+    const { content } = req.body;
+
+    if (urls.length === 0)
       return next(new ErrorHandler("Please Add images", 403));
 
     const newPost = await Post.create({
       content,
-      images,
+      images: urls,
       user: req.user._id,
     });
 
     return res.json({
-      msg: "Created Post!",
+      message: "Created Post!",
       post: newPost,
     });
   } catch (err) {

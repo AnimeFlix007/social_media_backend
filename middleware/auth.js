@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
       return next(new ErrorHandler("Invalid Token", 401));
     }
   } catch (error) {
-    return next(new ErrorHandler());
+    return next(new ErrorHandler("Token Expired", 401));
   }
 };
 
