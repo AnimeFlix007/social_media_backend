@@ -37,8 +37,18 @@ const createPost = async (req, res, next) => {
 
 const getAllPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find({}).populate("user");
+    const posts = await Post.find({}).populate("user").select("-password");
     return res.json({ posts });
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
+const getAllImages = async (req, res, next) => {
+  try {
+    const posts = await Post.find({ user: req.user._id });
+    const images = posts.map((post) => post.images).reverse();
+    return res.json({ images: images.flat() });
   } catch (error) {
     return next(new ErrorHandler());
   }
@@ -79,4 +89,11 @@ const deletePost = async (req, res, next) => {
   }
 };
 
-module.exports = { createPost, getAllPosts, getPost, updatePost, deletePost };
+module.exports = {
+  createPost,
+  getAllPosts,
+  getPost,
+  updatePost,
+  deletePost,
+  getAllImages,
+};
