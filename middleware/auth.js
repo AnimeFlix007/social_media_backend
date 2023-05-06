@@ -5,7 +5,6 @@ const ErrorHandler = require("../utils/errorHandler");
 const auth = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-    console.log(token);
     if (!token) return next(new ErrorHandler("Unaauthorized User"));
     if (token.startsWith("Bearer")) {
       const access_token = token.split(" ")[1];
