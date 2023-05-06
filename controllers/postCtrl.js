@@ -36,9 +36,15 @@ const createPost = async (req, res, next) => {
 };
 
 const getAllPosts = async (req, res, next) => {
+  const userId = req.user._id;
   try {
-    const posts = await Post.find({}).populate("user").select("-password");
-    return res.json({ posts });
+    const posts = await Post.find({})
+      .populate("user likes")
+      .select("-password");
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == userId.toString()) ? true : false
+    );
+    return res.json({ posts, likes });
   } catch (error) {
     return next(new ErrorHandler());
   }
@@ -102,14 +108,16 @@ const likePost = async (req, res, next) => {
         { $pull: { likes: userId } },
         { new: true }
       );
-      return res.status(200).json({ message: "removed Liked from Post" });
+      return res
+        .status(200)
+        .json({ message: "removed Liked from Post", liked: false });
     } else {
       await Post.findByIdAndUpdate(
         postId,
         { $push: { likes: userId } },
         { new: true }
       );
-      return res.status(200).json({ message: "Liked Post" });
+      return res.status(200).json({ message: "Liked Post", liked: true });
     }
   } catch (error) {
     return next(new ErrorHandler());
