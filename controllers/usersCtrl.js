@@ -1,3 +1,4 @@
+const Post = require("../model/Post");
 const User = require("../model/User");
 const ErrorHandler = require("../utils/errorHandler");
 
@@ -98,6 +99,33 @@ const unfollow = async (req, res, next) => {
   }
 };
 
+const savePost = async (req, res, next) => {
+  const postId = req.params.postId;
+  const userId = req.user._id;
+  try {
+    const post = await Post.findById(postId) 
+    if(!post) return next(new ErrorHandler("Invalid Post", 404));
+    const isSaved = req.user.saved.find((post) => post.toString() == postId);
+    if (isSaved) {
+      await User.findByIdAndUpdate(
+        userId,
+        { $pull: { saved: postId } },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Post Removed From Save" });
+    } else {
+      await User.findByIdAndUpdate(
+        userId,
+        { $push: { saved: postId } },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Post Saved" });
+    }
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
 const suggestedUsers = async (req, res) => {
   try {
     const newArr = [...req.user.following, req.user._id];
@@ -141,4 +169,5 @@ module.exports = {
   followUser,
   unfollow,
   suggestedUsers,
+  savePost
 };
