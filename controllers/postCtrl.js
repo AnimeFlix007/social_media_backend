@@ -53,9 +53,10 @@ const getAllPosts = async (req, res, next) => {
 };
 
 const getAllImages = async (req, res, next) => {
+  const userId = req.params.id;
   try {
-    const posts = await Post.find({ user: req.user._id });
-    const images = posts.map((post) => post.images).reverse();
+    const posts = await Post.find({ user: userId });
+    const images = posts.map((post) => post.images);
     return res.json({ images: images.flat() });
   } catch (error) {
     return next(new ErrorHandler());
@@ -63,17 +64,17 @@ const getAllImages = async (req, res, next) => {
 };
 
 const getAllUserPosts = async (req, res, next) => {
+  const userId = req.params.id;
   try {
-    let posts = await Post.find({ user: req.user._id })
+    const posts = await Post.find({ user: userId })
       .populate("user likes")
       .select("-password");
-    posts = posts.reverse();
     const likes = posts.map((post) =>
       post.likes.find((user) => user._id.toString() == req.user._id.toString())
         ? true
         : false
     );
-    return res.json({ posts: posts, likes });
+    return res.json({ posts, likes });
   } catch (error) {
     return next(new ErrorHandler());
   }

@@ -5,8 +5,8 @@ const upload = require("../middleware/multer");
 
 router.get("/", auth, postCtrl.getAllPosts);
 router.post("/", auth, upload.array("images"), postCtrl.createPost);
-router.get("/allimages", auth, postCtrl.getAllImages);
-router.get("/your-posts", auth, postCtrl.getAllUserPosts);
+router.get("/allimages/:id", auth, postCtrl.getAllImages);
+router.get("/your-posts/:id", auth, postCtrl.getAllUserPosts);
 router.patch("/like/:id", auth, postCtrl.likePost);
 router.get("/:id", auth, postCtrl.getPost);
 router.patch("/:id", auth, postCtrl.updatePost);
