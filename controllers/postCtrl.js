@@ -42,7 +42,9 @@ const getAllPosts = async (req, res, next) => {
       .populate("user likes")
       .select("-password");
     const likes = posts.map((post) =>
-      post.likes.find((user) => user._id.toString() == userId.toString()) ? true : false
+      post.likes.find((user) => user._id.toString() == userId.toString())
+        ? true
+        : false
     );
     return res.json({ posts, likes });
   } catch (error) {
@@ -55,6 +57,23 @@ const getAllImages = async (req, res, next) => {
     const posts = await Post.find({ user: req.user._id });
     const images = posts.map((post) => post.images).reverse();
     return res.json({ images: images.flat() });
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
+const getAllUserPosts = async (req, res, next) => {
+  try {
+    let posts = await Post.find({ user: req.user._id })
+      .populate("user likes")
+      .select("-password");
+    posts = posts.reverse();
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == req.user._id.toString())
+        ? true
+        : false
+    );
+    return res.json({ posts: posts, likes });
   } catch (error) {
     return next(new ErrorHandler());
   }
@@ -131,5 +150,6 @@ module.exports = {
   updatePost,
   deletePost,
   getAllImages,
+  getAllUserPosts,
   likePost,
 };
