@@ -89,6 +89,33 @@ const deletePost = async (req, res, next) => {
   }
 };
 
+const likePost = async (req, res, next) => {
+  const postId = req.params.id;
+  const userId = req.user._id;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) return next(new ErrorHandler("Invalid Post", 402));
+    const isLiked = post.likes.find((user) => user == userId.toString());
+    if (isLiked) {
+      await Post.findByIdAndUpdate(
+        postId,
+        { $pull: { likes: userId } },
+        { new: true }
+      );
+      return res.status(200).json({ message: "removed Liked from Post" });
+    } else {
+      await Post.findByIdAndUpdate(
+        postId,
+        { $push: { likes: userId } },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Liked Post" });
+    }
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -96,4 +123,5 @@ module.exports = {
   updatePost,
   deletePost,
   getAllImages,
+  likePost,
 };
