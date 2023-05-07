@@ -144,6 +144,54 @@ const likePost = async (req, res, next) => {
   }
 };
 
+const discover = async (req, res) => {
+  try {
+    const newArr = [...req.user.following, req.user._id];
+
+    const num = req.query.num || 10;
+
+    const posts = await Post.aggregate([
+      { $match: { user: { $in: newArr } } },
+      { $sample: { size: Number(num) } },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "likes",
+      //     foreignField: "_id",
+      //     as: "likes",
+      //   },
+      // },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+    ]);
+
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == req.user._id.toString())
+        ? true
+        : false
+    );
+
+    return res.json({
+      likes,
+      posts: posts.map((post) => {
+        return {
+          ...post,
+          user: post.user[0],
+        };
+      }),
+      newArr
+    });
+  } catch (err) {
+    return next(new ErrorHandler());
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -153,4 +201,5 @@ module.exports = {
   getAllImages,
   getAllUserPosts,
   likePost,
+  discover,
 };
