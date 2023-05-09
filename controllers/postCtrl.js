@@ -46,7 +46,12 @@ const getAllPosts = async (req, res, next) => {
         ? true
         : false
     );
-    return res.json({ posts, likes });
+    const saved = posts.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
+    return res.json({ posts, likes, saved });
   } catch (error) {
     return next(new ErrorHandler());
   }
@@ -74,7 +79,12 @@ const getAllUserPosts = async (req, res, next) => {
         ? true
         : false
     );
-    return res.json({ posts, likes });
+    const saved = posts.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
+    return res.json({ posts, likes, saved });
   } catch (error) {
     return next(new ErrorHandler());
   }
@@ -177,6 +187,12 @@ const discover = async (req, res) => {
         : false
     );
 
+    const saved = posts.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
+
     return res.json({
       likes,
       posts: posts.map((post) => {
@@ -185,7 +201,7 @@ const discover = async (req, res) => {
           user: post.user[0],
         };
       }),
-      newArr
+      saved,
     });
   } catch (err) {
     return next(new ErrorHandler());

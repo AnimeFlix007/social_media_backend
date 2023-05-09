@@ -112,14 +112,14 @@ const savePost = async (req, res, next) => {
         { $pull: { saved: postId } },
         { new: true }
       );
-      return res.status(200).json({ message: "Post Removed From Save" });
+      return res.status(200).json({ message: "Post Removed From Save", saved: false });
     } else {
       await User.findByIdAndUpdate(
         userId,
         { $push: { saved: postId } },
         { new: true }
       );
-      return res.status(200).json({ message: "Post Saved" });
+      return res.status(200).json({ message: "Post Saved", saved: true });
     }
   } catch (error) {
     return next(new ErrorHandler());
