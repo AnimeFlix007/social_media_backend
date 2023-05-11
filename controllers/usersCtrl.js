@@ -20,7 +20,7 @@ const userDetail = async (req, res, next) => {
     const { id } = req.params;
     const user = await User.findById(id)
       .select("-password")
-      .populate("followers following");
+      .populate("followers following close_friends");
     if (!user) return next(new ErrorHandler("User does not exists", 404));
     return res.status(200).json({ user });
   } catch (error) {
@@ -234,5 +234,5 @@ module.exports = {
   unfollow,
   suggestedUsers,
   savePost,
-  closeFriend
+  closeFriend,
 };
