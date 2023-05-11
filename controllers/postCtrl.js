@@ -37,8 +37,13 @@ const createPost = async (req, res, next) => {
 
 const getAllPosts = async (req, res, next) => {
   const userId = req.user._id;
+  const page = req.query.page || 1;
+  const limit = 12;
+  const skip = (page - 1) * limit;
   try {
     const posts = await Post.find({})
+      // .skip(skip)
+      // .limit(limit)
       .populate("user likes")
       .select("-password");
     const likes = posts.map((post) =>
@@ -53,7 +58,7 @@ const getAllPosts = async (req, res, next) => {
     );
     return res.json({ posts, likes, saved });
   } catch (error) {
-    return next(new ErrorHandler());
+    return next(new ErrorHandler(error.message));
   }
 };
 

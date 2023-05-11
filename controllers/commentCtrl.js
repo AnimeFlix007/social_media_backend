@@ -3,8 +3,11 @@ const ErrorHandler = require("../utils/errorHandler");
 
 const getPostComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find({ postId: req.params.postId });
-    return res.status(200).json({ comments });
+    const comments = await Comment.find({ postId: req.params.postId }).populate(
+      "user",
+      "avatar username"
+    );
+    return res.status(200).json({ comments: comments.reverse() });
   } catch (error) {
     return next(new ErrorHandler("Internal Server Error", 500));
   }
@@ -20,7 +23,7 @@ const createComment = async (req, res, next) => {
     });
     return res.status(200).json({ comment, message: "New Comment Added" });
   } catch (error) {
-    return next(new ErrorHandler("Internal Server Error", 500));
+    return next(new ErrorHandler(error.message, 500));
   }
 };
 
@@ -45,7 +48,7 @@ const deleteComment = async (req, res, next) => {
     await Comment.findByIdAndDelete(req.params.commentId);
     return res.status(200).json({ message: "Comment Deleted" });
   } catch (error) {
-    return next(new ErrorHandler("Internal Server Error", 500));
+    return next(new ErrorHandler(error.message, 500));
   }
 };
 
@@ -53,5 +56,5 @@ module.exports = {
   getPostComments,
   createComment,
   updateComment,
-  deleteComment
+  deleteComment,
 };

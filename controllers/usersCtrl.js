@@ -43,6 +43,28 @@ const updateUser = async (req, res, next) => {
     return next(new ErrorHandler(error.message));
   }
 };
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAndDelete(id);
+    if (!user) return next(new ErrorHandler("User does not exists", 404));
+    return res
+      .status(200)
+      .json({ message: "Profile Deleted Sucsessfully" });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
+const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    return res
+      .status(200)
+      .json({ users });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
 
 const followUser = async (req, res, next) => {
   const loginUserId = req.user._id;
@@ -130,7 +152,7 @@ const suggestedUsers = async (req, res) => {
   try {
     const newArr = [...req.user.following, req.user._id];
 
-    const num = req.query.num || 10;
+    const num = req.query.num || 5;
 
     const users = await User.aggregate([
       { $match: { _id: { $nin: newArr } } },
@@ -165,7 +187,9 @@ const suggestedUsers = async (req, res) => {
 module.exports = {
   searchUser,
   userDetail,
+  getAllUsers,
   updateUser,
+  deleteUser,
   followUser,
   unfollow,
   suggestedUsers,
