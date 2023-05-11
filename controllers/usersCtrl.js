@@ -48,9 +48,7 @@ const deleteUser = async (req, res, next) => {
     const { id } = req.params;
     const user = await User.findByIdAndDelete(id);
     if (!user) return next(new ErrorHandler("User does not exists", 404));
-    return res
-      .status(200)
-      .json({ message: "Profile Deleted Sucsessfully" });
+    return res.status(200).json({ message: "Profile Deleted Sucsessfully" });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
@@ -58,9 +56,7 @@ const deleteUser = async (req, res, next) => {
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
-    return res
-      .status(200)
-      .json({ users });
+    return res.status(200).json({ users });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
@@ -125,8 +121,8 @@ const savePost = async (req, res, next) => {
   const postId = req.params.postId;
   const userId = req.user._id;
   try {
-    const post = await Post.findById(postId) 
-    if(!post) return next(new ErrorHandler("Invalid Post", 404));
+    const post = await Post.findById(postId);
+    if (!post) return next(new ErrorHandler("Invalid Post", 404));
     const isSaved = req.user.saved.find((post) => post.toString() == postId);
     if (isSaved) {
       await User.findByIdAndUpdate(
@@ -134,7 +130,9 @@ const savePost = async (req, res, next) => {
         { $pull: { saved: postId } },
         { new: true }
       );
-      return res.status(200).json({ message: "Post Removed From Save", saved: false });
+      return res
+        .status(200)
+        .json({ message: "Post Removed From Save", saved: false });
     } else {
       await User.findByIdAndUpdate(
         userId,
@@ -184,6 +182,48 @@ const suggestedUsers = async (req, res) => {
   }
 };
 
+const closeFriend = async (req, res, next) => {
+  const loginUserId = req.user._id;
+  const friendId = req.params.friendId;
+  try {
+    const targetUser = await User.findById(friendId);
+    if (!targetUser) {
+      return next(new ErrorHandler("User does not exists", 405));
+    }
+    const isFollowed = req.user.following.find(
+      (userId) => userId.toString() == friendId.toString()
+    );
+    if (!isFollowed) {
+      return next(
+        new ErrorHandler(
+          "Please Follow this user to add in your close friend list",
+          405
+        )
+      );
+    }
+    const isCloseFriend = req.user.close_friends.find(
+      (userId) => userId.toString() == friendId.toString()
+    );
+    if (isCloseFriend) {
+      await User.findByIdAndUpdate(loginUserId, {
+        $pull: { close_friends: friendId },
+      });
+      return res.json({
+        message: `${targetUser.username} Removed From Friend List`,
+      });
+    } else {
+      await User.findByIdAndUpdate(loginUserId, {
+        $push: { close_friends: friendId },
+      });
+      return res.json({
+        message: `${targetUser.username} Added to Friend List`,
+      });
+    }
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
+
 module.exports = {
   searchUser,
   userDetail,
@@ -193,5 +233,6 @@ module.exports = {
   followUser,
   unfollow,
   suggestedUsers,
-  savePost
+  savePost,
+  closeFriend
 };

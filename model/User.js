@@ -47,6 +47,7 @@ const userSchema = new mongoose.Schema(
     followers: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     following: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     saved: [{ type: mongoose.Types.ObjectId, ref: "user" }],
+    close_friends: [{ type: mongoose.Types.ObjectId, ref: "user" }],
   },
   {
     timestamps: true,
