@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     bg_image: {
       type: String,
       default:
-        "https://fictionhorizon.com/wp-content/uploads/2023/03/FairyTail.jpg",
+        "https://i.pinimg.com/originals/13/60/e7/1360e7721ade8b6e02f8024cec5cd895.jpg",
     },
     role: { type: String, default: "user" },
     gender: { type: String, default: "male" },

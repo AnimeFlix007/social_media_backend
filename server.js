@@ -6,6 +6,7 @@ const errorMiddleware = require("./middleware/error");
 const authRouter = require("./router/authRouter");
 const userRouter = require("./router/userRouter");
 const postRouter = require("./router/postRouter");
+const commentRouter = require("./router/commentRouter");
 require("dotenv").config();
 
 const PORT = 5000;
@@ -24,6 +25,7 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/comments", commentRouter);
 
 app.use(errorMiddleware);
 
