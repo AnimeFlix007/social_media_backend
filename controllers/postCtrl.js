@@ -159,7 +159,7 @@ const likePost = async (req, res, next) => {
   }
 };
 
-const discover = async (req, res) => {
+const discover = async (req, res, next) => {
   try {
     const newArr = [...req.user.following, req.user._id];
 
@@ -213,6 +213,40 @@ const discover = async (req, res) => {
   }
 };
 
+const recommendedPosts = async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    const posts = await Post.find({})
+      .populate("user likes")
+      .select("-password");
+
+    const length = posts.length;
+
+    const recommended = [];
+
+    while (recommended.length <= 3) {
+      let random = Math.floor(Math.random() * length) + 1;
+      if (random <= length) {
+        recommended.push(posts[random]);
+      }
+    }
+
+    const likes = recommended.map((post) =>
+      post.likes.find((user) => user._id.toString() == userId.toString())
+        ? true
+        : false
+    );
+    const saved = recommended.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
+    return res.json({ recommended, likes, saved });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -223,4 +257,5 @@ module.exports = {
   getAllUserPosts,
   likePost,
   discover,
+  recommendedPosts,
 };
