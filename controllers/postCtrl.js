@@ -42,8 +42,8 @@ const getAllPosts = async (req, res, next) => {
   const skip = (page - 1) * limit;
   try {
     const posts = await Post.find({})
-      // .skip(skip)
-      // .limit(limit)
+      .skip(skip)
+      .limit(limit)
       .populate("user likes")
       .select("-password");
     const likes = posts.map((post) =>

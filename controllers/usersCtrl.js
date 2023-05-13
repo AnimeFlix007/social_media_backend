@@ -24,7 +24,7 @@ const userDetail = async (req, res, next) => {
     if (!user) return next(new ErrorHandler("User does not exists", 404));
     return res.status(200).json({ user });
   } catch (error) {
-    return next(new ErrorHandler());
+    return next(new ErrorHandler(error.message));
   }
 };
 
