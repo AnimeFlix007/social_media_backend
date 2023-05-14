@@ -38,7 +38,7 @@ const createPost = async (req, res, next) => {
 const getAllPosts = async (req, res, next) => {
   const userId = req.user._id;
   const page = req.query.page || 1;
-  const limit = 12;
+  const limit = 8;
   const skip = (page - 1) * limit;
   try {
     const posts = await Post.find({})
@@ -56,7 +56,8 @@ const getAllPosts = async (req, res, next) => {
         ? true
         : false
     );
-    return res.json({ posts, likes, saved });
+    const results = (await Post.find().select("_id")).length;
+    return res.json({ results, posts, likes, saved });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
@@ -225,12 +226,11 @@ const recommendedPosts = async (req, res, next) => {
     const recommended = [];
 
     while (recommended.length <= 3) {
-      let random = Math.floor(Math.random() * length) + 1;
-      if (random <= length) {
+      let random = Math.floor(Math.random() * length) - 1;
+      if (random < length && random >= 0) {
         recommended.push(posts[random]);
       }
     }
-
     const likes = recommended.map((post) =>
       post.likes.find((user) => user._id.toString() == userId.toString())
         ? true
