@@ -19,7 +19,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://192.168.0.104:5173",
-      "https://v-media-social.netlify.app/",
+      "https://v-media-social.netlify.app",
     ],
     methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
     credentials: true,
