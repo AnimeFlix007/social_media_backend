@@ -97,6 +97,7 @@ const logout = async (req, res, next) => {
 const generateAccessToken = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refreshtoken;
+    console.log(refresh_token);
     if (!refresh_token) return next(new ErrorHandler("Unauthorized", 401));
     jwt.verify(
       refresh_token,
@@ -110,6 +111,12 @@ const generateAccessToken = async (req, res, next) => {
         if (!user) return next(new ErrorHandler("User does not exists", 409));
 
         const access_token = createAccessToken({ id: user._id });
+
+        res.cookie("refreshtoken", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
+        });
 
         return res.status(200).json({ user, access_token });
       }
