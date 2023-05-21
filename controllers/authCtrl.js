@@ -69,6 +69,8 @@ const login = async (req, res, next) => {
     res.cookie("refreshtoken", refresh_token, {
       httpOnly: true,
       secure: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
     });
 
@@ -130,5 +132,5 @@ module.exports = {
   register,
   login,
   generateAccessToken,
-  logout
+  logout,
 };
