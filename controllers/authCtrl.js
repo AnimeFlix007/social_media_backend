@@ -69,8 +69,6 @@ const login = async (req, res, next) => {
     res.cookie("refreshtoken", refresh_token, {
       httpOnly: true,
       secure: true,
-      secure: true,
-      sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
     });
 
@@ -114,12 +112,6 @@ const generateAccessToken = async (req, res, next) => {
 
         const access_token = createAccessToken({ id: user._id });
 
-        res.cookie("refreshtoken", refresh_token, {
-          httpOnly: true,
-          secure: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
-        });
-
         return res.status(200).json({ user, access_token });
       }
     );
@@ -132,5 +124,5 @@ module.exports = {
   register,
   login,
   generateAccessToken,
-  logout,
+  logout
 };
