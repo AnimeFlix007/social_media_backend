@@ -14,7 +14,17 @@ const PORT = 5000;
 const app = express();
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://192.168.0.104:5173",
+      "https://v-media-social.netlify.app",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
