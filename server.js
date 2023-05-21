@@ -7,7 +7,7 @@ const authRouter = require("./router/authRouter");
 const userRouter = require("./router/userRouter");
 const postRouter = require("./router/postRouter");
 const commentRouter = require("./router/commentRouter");
-var csrf = require('csurf');
+var csrf = require("csurf");
 require("dotenv").config();
 
 const PORT = 5000;
@@ -18,17 +18,26 @@ app.use(express.json({ limit: "1mb" }));
 const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: "none",
     secure: true,
   },
 });
 
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
-app.use(cors({ credentials: true, origin: clientOrigin }));
+app.use(
+  cors({
+    credentials: true,
+    origin: [
+      "http://localhost:5173",
+      "http://192.168.0.104:5173",
+      "https://v-media-social.netlify.app",
+    ],
+  })
+);
 
-app.get('/', csrfProtection, function (req, res) {
-  res.cookie('XSRF-TOKEN', req.csrfToken(), { sameSite: 'none', secure: true });
+app.get("/", csrfProtection, function (req, res) {
+  res.cookie("XSRF-TOKEN", req.csrfToken(), { sameSite: "none", secure: true });
   res.end();
 });
 
