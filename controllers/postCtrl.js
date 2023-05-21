@@ -31,7 +31,7 @@ const createPost = async (req, res, next) => {
       post: newPost,
     });
   } catch (err) {
-    return next(new ErrorHandler());
+    return next(new ErrorHandler(err.message));
   }
 };
 
