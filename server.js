@@ -14,12 +14,7 @@ const PORT = 5000;
 const app = express();
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
-app.use(
-  cors({
-    methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
