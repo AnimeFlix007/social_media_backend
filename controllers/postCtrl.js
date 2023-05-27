@@ -166,7 +166,7 @@ const discover = async (req, res, next) => {
 
     const num = req.query.num || 10;
 
-    const posts = await Post.aggregate([
+    let posts = await Post.aggregate([
       { $match: { user: { $in: newArr } } },
       { $sample: { size: Number(num) } },
       // {
@@ -186,6 +186,8 @@ const discover = async (req, res, next) => {
         },
       },
     ]);
+
+    posts = posts.slice(0, 8)
 
     const likes = posts.map((post) =>
       post.likes.find((user) => user._id.toString() == req.user._id.toString())

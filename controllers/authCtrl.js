@@ -31,18 +31,8 @@ const register = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    const access_token = createAccessToken({ id: newUser._id });
-    const refresh_token = createRefreshToken({ id: newUser._id });
-
-    res.cookie("refreshtoken", refresh_token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
-    });
-
     return res.status(200).json({
       message: "Register Success!",
-      access_token,
       user: {
         ...newUser._doc,
         password: "",
@@ -66,15 +56,10 @@ const login = async (req, res, next) => {
     const access_token = createAccessToken({ id: isUserExists._id });
     const refresh_token = createRefreshToken({ id: isUserExists._id });
 
-    res.cookie("refreshtoken", refresh_token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
-    });
-
     return res.status(200).json({
       message: "Login Success!",
       access_token,
+      refresh_token,
       user: {
         ...isUserExists._doc,
         password: "",
@@ -85,19 +70,9 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res, next) => {
-  try {
-    res.clearCookie("refreshtoken", { path: "/api/auth/refresh_token" });
-    return res.json({ message: "Logged out!" });
-  } catch (err) {
-    return next(new ErrorHandler(err.message, 500));
-  }
-};
-
 const generateAccessToken = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refreshtoken;
-    console.log(refresh_token);
     if (!refresh_token) return next(new ErrorHandler("Unauthorized", 401));
     jwt.verify(
       refresh_token,
@@ -123,6 +98,5 @@ const generateAccessToken = async (req, res, next) => {
 module.exports = {
   register,
   login,
-  generateAccessToken,
-  logout
+  generateAccessToken
 };
