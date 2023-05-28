@@ -28,6 +28,19 @@ const userDetail = async (req, res, next) => {
   }
 };
 
+const loggedInUserDetails = async (req, res, next) => {
+  try {
+    const id = req.user._id;
+    const user = await User.findById(id)
+      .select("-password")
+      .populate("followers following close_friends saved");
+    if (!user) return next(new ErrorHandler("User does not exists", 404));
+    return res.status(200).json({ user });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
+
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -233,20 +246,23 @@ const closeFriend = async (req, res, next) => {
         $pull: { close_friends: friendId },
       });
       return res.json({
-        message: `${targetUser.username} Removed From Friend List`,
+        message: `${targetUser.username} removed From Close Friend`,
+        closefriend: false,
       });
     } else {
       await User.findByIdAndUpdate(loginUserId, {
         $push: { close_friends: friendId },
       });
       return res.json({
-        message: `${targetUser.username} Added to Friend List`,
+        message: `${targetUser.username} added to Close Friend`,
+        closefriend: true,
       });
     }
   } catch (error) {
-    return next(new ErrorHandler());
+    return next(new ErrorHandler(error.message));
   }
 };
+
 const getUserCloseFriends = async (req, res, next) => {
   const userId = req.user._id;
   try {
@@ -260,6 +276,7 @@ const getUserCloseFriends = async (req, res, next) => {
 module.exports = {
   searchUser,
   userDetail,
+  loggedInUserDetails,
   getAllUsers,
   updateUser,
   deleteUser,
