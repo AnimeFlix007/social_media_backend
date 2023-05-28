@@ -43,6 +43,7 @@ const updateUser = async (req, res, next) => {
     return next(new ErrorHandler(error.message));
   }
 };
+
 const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -53,6 +54,7 @@ const deleteUser = async (req, res, next) => {
     return next(new ErrorHandler(error.message));
   }
 };
+
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
@@ -146,6 +148,28 @@ const savePost = async (req, res, next) => {
   }
 };
 
+const getUserSavePosts = async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId).populate("saved");
+    const posts = user.saved;
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == req.user._id.toString())
+        ? true
+        : false
+    );
+
+    const saved = posts.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
+    return res.status(200).json({ savedPosts: posts, likes, saved });
+  } catch (error) {
+    return next(new ErrorHandler(error.message));
+  }
+};
+
 const suggestedUsers = async (req, res) => {
   try {
     const newArr = [...req.user.following, req.user._id];
@@ -223,6 +247,15 @@ const closeFriend = async (req, res, next) => {
     return next(new ErrorHandler());
   }
 };
+const getUserCloseFriends = async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId).populate("close_friends");
+    return res.status(200).json({ close_friends: user.close_friends });
+  } catch (error) {
+    return next(new ErrorHandler());
+  }
+};
 
 module.exports = {
   searchUser,
@@ -235,4 +268,6 @@ module.exports = {
   suggestedUsers,
   savePost,
   closeFriend,
+  getUserSavePosts,
+  getUserCloseFriends,
 };

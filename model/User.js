@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     instagram: { type: String, default: "" },
     followers: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     following: [{ type: mongoose.Types.ObjectId, ref: "user" }],
-    saved: [{ type: mongoose.Types.ObjectId, ref: "user" }],
+    saved: [{ type: mongoose.Types.ObjectId, ref: "post" }],
     close_friends: [{ type: mongoose.Types.ObjectId, ref: "user" }],
   },
   {
