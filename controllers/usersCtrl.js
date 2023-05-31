@@ -264,7 +264,7 @@ const closeFriend = async (req, res, next) => {
 };
 
 const getUserCloseFriends = async (req, res, next) => {
-  const userId = req.user._id;
+  const userId = req.params.userId;
   try {
     const user = await User.findById(userId).populate("close_friends");
     return res.status(200).json({ close_friends: user.close_friends });
