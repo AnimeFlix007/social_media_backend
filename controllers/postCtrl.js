@@ -1,18 +1,16 @@
 const Post = require("../model/Post");
-const uploadCloudinary = require("../utils/cloudinary");
 const ErrorHandler = require("../utils/errorHandler");
-const fs = require("fs");
 
 const createPost = async (req, res, next) => {
-  const uploader = async (path) => await uploadCloudinary(path, "images");
   const files = req.files;
   try {
     const urls = [];
     for (const file of files) {
-      const { path } = file;
-      const newPath = await uploader(path);
-      urls.push(newPath);
-      fs.unlinkSync(path);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+          urls.push(reader.result)
+      };
+      reader.readAsDataURL(file);
     }
 
     const { content } = req.body;
