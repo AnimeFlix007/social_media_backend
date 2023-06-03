@@ -2,25 +2,14 @@ const Post = require("../model/Post");
 const ErrorHandler = require("../utils/errorHandler");
 
 const createPost = async (req, res, next) => {
-  const files = req.files;
+  const { content, images } = req.body;
   try {
-    const urls = [];
-    for (const file of files) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-          urls.push(reader.result)
-      };
-      reader.readAsDataURL(file);
-    }
-
-    const { content } = req.body;
-
-    if (urls.length === 0)
+    if (images.length === 0)
       return next(new ErrorHandler("Please Add images", 403));
 
     const newPost = await Post.create({
       content,
-      images: urls,
+      images,
       user: req.user._id,
     });
 
@@ -185,7 +174,7 @@ const discover = async (req, res, next) => {
       },
     ]);
 
-    posts = posts.slice(0, 8)
+    posts = posts.slice(0, 8);
 
     const likes = posts.map((post) =>
       post.likes.find((user) => user._id.toString() == req.user._id.toString())
