@@ -46,6 +46,7 @@ const getAllPosts = async (req, res, next) => {
     const results = (await Post.find().select("_id")).length;
     return res.json({ results, posts, likes, saved });
   } catch (error) {
+    console.log(error);
     return next(new ErrorHandler(error.message));
   }
 };
