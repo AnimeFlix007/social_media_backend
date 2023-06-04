@@ -43,7 +43,7 @@ const getAllPosts = async (req, res, next) => {
         ? true
         : false
     );
-    const results = (await Post.find().select("_id")).length;
+    const results = await Post.count()
     return res.json({ results, posts, likes, saved });
   } catch (error) {
     return next(new ErrorHandler(error.message));
