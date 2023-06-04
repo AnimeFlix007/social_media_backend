@@ -23,10 +23,10 @@ const createPost = async (req, res, next) => {
 };
 
 const getAllPosts = async (req, res, next) => {
-  const userId = req.user._id;
-  const page = req.query.page || 1;
-  const limit = 16;
-  const skip = (page - 1) * limit;
+  // const userId = req.user._id;
+  // const page = req.query.page || 1;
+  // const limit = 16;
+  // const skip = (page - 1) * limit;
   try {
     const posts = await Post.find()
       // .skip(skip)
@@ -43,8 +43,8 @@ const getAllPosts = async (req, res, next) => {
     //     ? true
     //     : false
     // );
-    const results = (await Post.find().select("_id")).length;
-    return res.json({ results, posts});
+    const results = await Post.count();
+    return res.json({ results, posts });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
