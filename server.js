@@ -20,7 +20,6 @@ app.use(
       "https://v-media-social.netlify.app",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
   })
 );
 
