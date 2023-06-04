@@ -33,18 +33,18 @@ const getAllPosts = async (req, res, next) => {
       // .limit(limit)
       .populate("user likes")
       .select("-password");
-    // const likes = posts.map((post) =>
-    //   post.likes.find((user) => user._id.toString() == userId.toString())
-    //     ? true
-    //     : false
-    // );
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == userId.toString())
+        ? true
+        : false
+    );
     // const saved = posts.map((post) =>
     //   req.user.saved.find((postId) => postId.toString() == post._id.toString())
     //     ? true
     //     : false
     // );
     const results = (await Post.find().select("_id")).length;
-    return res.json({ results, posts});
+    return res.json({ results, posts, likes});
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
