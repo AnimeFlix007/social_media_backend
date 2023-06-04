@@ -46,7 +46,7 @@ const getAllPosts = async (req, res, next) => {
     const results = await Post.count()
     return res.json({ results, posts, likes, saved });
   } catch (error) {
-    return next(new ErrorHandler(error.message));
+    return next(new ErrorHandler(error));
   }
 };
 
