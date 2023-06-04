@@ -24,8 +24,8 @@ const createPost = async (req, res, next) => {
 
 const getAllPosts = async (req, res, next) => {
   const userId = req.user._id;
-  const page = req.query.page || 1;
-  const limit = 2;
+  const page = req.query.page;
+  const limit = 8;
   const skip = (page - 1) * limit;
   try {
     const posts = await Post.find({})
