@@ -23,7 +23,7 @@ const createPost = async (req, res, next) => {
 };
 
 const getAllPosts = async (req, res, next) => {
-  // const userId = req.user._id;
+  const userId = req.user._id;
   // const page = req.query.page || 2;
   // const limit = 16;
   // const skip = (page - 1) * limit;
@@ -31,20 +31,20 @@ const getAllPosts = async (req, res, next) => {
     const posts = await Post.find()
     //   .skip(skip)
     //   .limit(limit)
-    //   .populate("user likes")
-    //   .select("-password");
-    // const likes = posts.map((post) =>
-    //   post.likes.find((user) => user._id.toString() == userId.toString())
-    //     ? true
-    //     : false
-    // );
-    // const saved = posts.map((post) =>
-    //   req.user.saved.find((postId) => postId.toString() == post._id.toString())
-    //     ? true
-    //     : false
-    // );
+      .populate("user likes")
+      .select("-password");
+    const likes = posts.map((post) =>
+      post.likes.find((user) => user._id.toString() == userId.toString())
+        ? true
+        : false
+    );
+    const saved = posts.map((post) =>
+      req.user.saved.find((postId) => postId.toString() == post._id.toString())
+        ? true
+        : false
+    );
     const results = (await Post.find().select("_id")).length;
-    return res.json({ results, posts });
+    return res.json({ results, posts, likes, saved });
   } catch (error) {
     return next(new ErrorHandler(error.message));
   }
