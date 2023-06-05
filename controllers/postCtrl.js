@@ -31,7 +31,7 @@ const getAllPosts = async (req, res, next) => {
     const posts = await Post.find()
       // .skip(skip)
       // .limit(limit)
-      .populate("user likes")
+      .populate("user")
       .select("-password");
     // const likes = posts.map((post) =>
     //   post.likes.find((user) => user._id.toString() == userId.toString())
