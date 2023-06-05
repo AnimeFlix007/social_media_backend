@@ -2,7 +2,7 @@ const auth = require("../middleware/auth");
 const router = require("express").Router();
 const postCtrl = require("../controllers/postCtrl");
 
-router.get("/all=posts", auth, postCtrl.getAllPosts);
+router.get("/all-posts", auth, postCtrl.getAllPosts);
 router.post("/", auth, postCtrl.createPost);
 router.get("/allimages/:id", auth, postCtrl.getAllImages);
 router.get("/explore", auth, postCtrl.discover);
