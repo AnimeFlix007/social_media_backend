@@ -28,11 +28,11 @@ const getAllPosts = async (req, res, next) => {
   // const limit = 16;
   // const skip = (page - 1) * limit;
   try {
-    const posts = await Post.find()
+    const posts = await Post.find({})
       // .skip(skip)
       // .limit(limit)
       .populate("user")
-      .select("-password");
+      // .select("-password");
     // const likes = posts.map((post) =>
     //   post.likes.find((user) => user._id.toString() == userId.toString())
     //     ? true
